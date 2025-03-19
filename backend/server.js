@@ -4,7 +4,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
 
-const app = express(); // Create the express app
+const app = express();
+
 // Middleware
 app.use(express.json());
 app.use(cors());
@@ -29,4 +30,6 @@ app.get('/', (req, res) => {
   res.send('Task Manager API is running');
 });
 
-module.exports = app; // Export the app instance
+// Start server
+const PORT = 10000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -14,6 +14,7 @@ import Colors from "../utils/Colors";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Login = ({ navigation }) => {
+  const API_URL = "https://rntodobackend.onrender.com"
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -27,7 +28,7 @@ const Login = ({ navigation }) => {
     setLoading(true);
 
     try {
-      const response = await fetch("http://192.168.128.84:5000/auth/login", { // Replace with your backend URL
+      const response = await fetch(`${API_URL}/auth/login`, { // Replace with your backend URL
         method: "POST",
         headers: {
           "Content-Type": "application/json",

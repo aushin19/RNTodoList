@@ -32,8 +32,9 @@
     "react-redux": "^9.2.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0",
-    "@react-native-community/cli": "latest"
+    "@babel/core": "^7.26.10",
+    "@react-native-community/cli": "latest",
+    "react-native-dotenv": "^3.4.11"
   },
   "private": true
 }

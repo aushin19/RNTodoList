@@ -23,6 +23,7 @@ import { useDispatch } from 'react-redux';
 import { logout } from '../redux/authSlice';
 
 const Home = ({ navigation }) => {
+  const API_URL = "https://rntodobackend.onrender.com"
   const [addTaskModalVisible, setAddTaskModalVisible] = useState(false);
   const [editTaskModalVisible, setEditTaskModalVisible] = useState(false);
   const [todos, setTodos] = useState([]);
@@ -32,9 +33,7 @@ const Home = ({ navigation }) => {
   const [selectedTask, setSelectedTask] = useState(null);
   const [refreshing, setRefreshing] = useState(false); // Add refreshing state
 
-
   const dispatch = useDispatch();
-
 
   const handleLogout = async () => {
     try {
@@ -65,7 +64,7 @@ const Home = ({ navigation }) => {
         return;
       }
 
-      const response = await fetch("http://192.168.128.84:5000/tasks", {
+      const response = await fetch(`${API_URL}/tasks`, {  // Use API_URL
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -109,7 +108,7 @@ const Home = ({ navigation }) => {
         return;
       }
 
-      const response = await fetch(`http://192.168.128.84:5000/tasks/${taskData._id}`, {
+      const response = await fetch(`${API_URL}/tasks/${taskData._id}`, {   // Use API_URL
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -149,7 +148,7 @@ const Home = ({ navigation }) => {
         return;
       }
 
-      const response = await fetch(`http://192.168.128.84:5000/tasks/${taskId}`, {
+      const response = await fetch(`${API_URL}/tasks/${taskId}`, {  // Use API_URL
         method: "DELETE",
         headers: {
           "x-auth-token": token,
@@ -202,7 +201,7 @@ const Home = ({ navigation }) => {
         return;
       }
 
-      const response = await fetch('http://192.168.128.84:5000/tasks', {
+      const response = await fetch(`${API_URL}/tasks`, {  // Use API_URL
         method: 'GET',
         headers: {
           'x-auth-token': token,
@@ -274,7 +273,7 @@ const Home = ({ navigation }) => {
           ) : todos && todos.length > 0 ? (
             todos.map((item, index) => (
               <Todo
-                key={index}
+                key={item._id} // Use _id as key
                 isDone={item.completed}
                 title={item.title}
                 subtitle={item.description}

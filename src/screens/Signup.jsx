@@ -12,6 +12,7 @@ import React, { useState } from "react";
 import Colors from "../utils/Colors";
 
 const Signup = ({ navigation }) => {
+  const API_URL = "https://rntodobackend.onrender.com"
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,7 +27,7 @@ const Signup = ({ navigation }) => {
     setLoading(true);
 
     try {
-      const response = await fetch("http://192.168.128.84:5000/auth/signup", { // Replace with your backend URL
+      const response = await fetch(`${API_URL}/auth/signup`, { // Replace with your backend URL
         method: "POST",
         headers: {
           "Content-Type": "application/json",
