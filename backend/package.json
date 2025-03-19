@@ -1,0 +1,23 @@
+{
+    "name": "RNTodoList",
+    "version": "1.0.0",
+    "description": "Backend for RNTodoList application",
+    "main": "server.js",
+    "scripts": {
+      "start": "node server.js"
+    },
+    "dependencies": {
+      "bcryptjs": "^3.0.2",
+      "cors": "^2.8.5",
+      "dotenv": "^16.4.7",
+      "express": "^4.18.2",
+      "jsonwebtoken": "^9.0.2",
+      "mongoose": "^8.12.1"
+    },
+    "devDependencies": {},
+    "engines": {
+      "node": ">=16.0.0"
+    },
+    "author": "Shivam",
+    "license": "MIT"
+  }
