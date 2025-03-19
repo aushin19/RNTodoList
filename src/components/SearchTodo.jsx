@@ -1,6 +1,7 @@
 import { StyleSheet, Text, TextInput, View } from 'react-native'
 import React from 'react'
 import { Ionicons } from '@expo/vector-icons'
+import Colors from '../utils/Colors'
 
 const SearchTodo = () => {
   return (
@@ -19,7 +20,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     height: 65,
     alignItems: "center",
-    backgroundColor: '#F6F0F0',
+    backgroundColor: Colors.cardBackground,
     borderRadius: 15,
     padding: 15,
   },

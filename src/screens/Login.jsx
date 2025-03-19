@@ -1,29 +1,61 @@
 import {
   StyleSheet,
-  Image,
   SafeAreaView,
   TextInput,
   Text,
   View,
   Pressable,
   ScrollView,
-  Modal,
   Alert,
+  ActivityIndicator
 } from "react-native";
 import React, { useState } from "react";
 import Colors from "../utils/Colors";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Login = ({ navigation }) => {
-  const [modalVisible, setModalVisible] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
-    setModalVisible(true)
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert("Error", "Please enter all fields");
+      return;
+    }
 
-    setTimeout(()=>{
-      setModalVisible(false)
-      navigation.navigate("Signup")
-    }, 2000)
-  }
+    setLoading(true);
+
+    try {
+      const response = await fetch("http://192.168.128.84:5000/auth/login", { // Replace with your backend URL
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Login successful
+        console.log("Login successful:", data);
+        // Store token securely in AsyncStorage
+        await AsyncStorage.setItem('token', data.token);
+        navigation.navigate("Home"); // Navigate to Home screen
+
+      } else {
+        // Login failed
+        console.error("Login failed:", data);
+        Alert.alert("Error", data.message || "Login failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+      Alert.alert("Error", "An error occurred during login. Please check your internet connection and try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <ScrollView
@@ -31,24 +63,6 @@ const Login = ({ navigation }) => {
       contentContainerStyle={{ flex: 1 }}
     >
       <SafeAreaView style={styles.container}>
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={modalVisible}
-          statusBarTranslucent={true}
-        >
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <Text style={styles.modalText}>Hello, this is a Modal!</Text>
-              <Pressable
-                style={[styles.button, styles.buttonClose]}
-                onPress={() => setModalVisible(!modalVisible)}
-              >
-                <Text style={styles.textStyle}>Hide Modal</Text>
-              </Pressable>
-            </View>
-          </View>
-        </Modal>
 
         <View
           style={[
@@ -61,7 +75,7 @@ const Login = ({ navigation }) => {
           >
             Welcome,
           </Text>
-          <Text style={{ color: "black", fontSize: 50, fontWeight: "bold" }}>
+          <Text style={{ color: Colors.font, fontSize: 50, fontWeight: "bold" }}>
             back!
           </Text>
           <Text
@@ -87,6 +101,9 @@ const Login = ({ navigation }) => {
             <TextInput
               style={styles.textInput}
               placeholder="john.doe@gmail.com"
+              placeholderTextColor="#909090"
+              value={email}
+              onChangeText={setEmail}
             />
           </View>
 
@@ -95,7 +112,10 @@ const Login = ({ navigation }) => {
             <TextInput
               style={styles.textInput}
               placeholder="••••••••••••••••"
+              placeholderTextColor="#909090"
               secureTextEntry={true}
+              value={password}
+              onChangeText={setPassword}
             />
           </View>
 
@@ -103,16 +123,18 @@ const Login = ({ navigation }) => {
             <Pressable
               style={({ pressed }) => [
                 styles.pressable,
-                { backgroundColor: pressed ? "#f68181" : "#f22a2a" },
+                { backgroundColor: pressed ? Colors.mainButtonColor : Colors.mainButtonColor },
               ]}
-
               onPress={handleLogin}
+              disabled={loading}
             >
-              <Text style={styles.buttonText}>Login</Text>
+              <Text style={styles.buttonText}>
+              {loading ? "Logging In..." : "Login"}
+              </Text>
             </Pressable>
 
             <Text
-              style={{ color: "#505050", fontWeight: "600", marginTop: 30 }}
+              style={{ color: Colors.font, fontWeight: "600", marginTop: 30 }}
             >
               Dont't have an account?{" "}
               <Pressable onPress={() => navigation.navigate("Signup")}>
@@ -149,6 +171,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 20,
     paddingHorizontal: 30,
+    color: Colors.font
   },
   image: {
     width: 150,
@@ -160,6 +183,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 14,
     marginBottom: 10,
+    color: Colors.font
   },
   textInput: {
     width: "100%",
@@ -167,17 +191,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     height: 50,
     padding: 15,
+    color: Colors.font,
     borderColor: Colors.borderStroke,
   },
   pressable: {
     alignItems: "center",
-    backgroundColor: "green",
     padding: 20,
     width: "100%",
     borderRadius: 10,
   },
   buttonText: {
-    color: "white",
+    color: Colors.font,
     fontWeight: "bold",
     fontSize: 16,
   },
@@ -209,13 +233,13 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   buttonOpen: {
-    backgroundColor: '#F194FF',
+    backgroundColor: Colors.mainButtonColor,
   },
   buttonClose: {
-    backgroundColor: '#2196F3',
+    backgroundColor: Colors.mainButtonColor,
   },
   textStyle: {
-    color: 'white',
+    color: Colors.font,
     fontWeight: 'bold',
     textAlign: 'center',
   },

@@ -1,0 +1,19 @@
+{
+    "version": 2,
+    "builds": [
+      {
+        "src": "server.js",
+        "use": "@vercel/node"
+      }
+    ],
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "/server.js"
+      }
+    ],
+    "env": {
+      "MONGO_URI": "mongodb+srv://shivam123:shivam123@mern-todo.nl4c9.mongodb.net/?retryWrites=true&w=majority&appName=mern-todo",
+      "JWT_SECRET": "your_very_secret_key"
+    }
+  }

@@ -1,19 +1,64 @@
 import {
   StyleSheet,
-  Image,
   SafeAreaView,
   TextInput,
   Text,
   View,
   Pressable,
   ScrollView,
+  Alert
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import Colors from "../utils/Colors";
 
-const Signup = ({navigation}) => {
+const Signup = ({ navigation }) => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSignup = async () => {
+    if (!name || !email || !password) {
+      Alert.alert("Error", "Please enter all fields");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await fetch("http://192.168.128.84:5000/auth/signup", { // Replace with your backend URL
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Signup successful
+        console.log("Signup successful:", data);
+        Alert.alert("Success", "Signup Successful! You can now login")
+        navigation.navigate("Login"); // Navigate to Login screen
+      } else {
+        // Signup failed
+        console.error("Signup failed:", data);
+        Alert.alert("Error", data.message || "Signup failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error during signup:", error);
+      Alert.alert("Error", "An error occurred during signup. Please check your internet connection and try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <ScrollView style={{ width: "100%", backgroundColor: Colors.background }} contentContainerStyle={{ flex: 1 }}>
+    <ScrollView
+      style={{ width: "100%", backgroundColor: Colors.background }}
+      contentContainerStyle={{ flex: 1 }}
+    >
       <SafeAreaView style={styles.container}>
         <View
           style={[
@@ -26,7 +71,7 @@ const Signup = ({navigation}) => {
           >
             Hello,
           </Text>
-          <Text style={{ color: "black", fontSize: 50, fontWeight: "bold" }}>
+          <Text style={{ color: Colors.font, fontSize: 50, fontWeight: "bold" }}>
             there!
           </Text>
           <Text
@@ -50,7 +95,13 @@ const Signup = ({navigation}) => {
         >
           <View style={styles.inputContainer}>
             <Text style={styles.text}>Name</Text>
-            <TextInput style={styles.textInput} placeholder="John Doe" />
+            <TextInput
+              style={styles.textInput}
+              placeholder="John Doe"
+              placeholderTextColor="#909090"
+              value={name}
+              onChangeText={setName}
+            />
           </View>
 
           <View style={styles.inputContainer}>
@@ -58,6 +109,9 @@ const Signup = ({navigation}) => {
             <TextInput
               style={styles.textInput}
               placeholder="john.doe@gmail.com"
+              placeholderTextColor="#909090"
+              value={email}
+              onChangeText={setEmail}
             />
           </View>
 
@@ -66,7 +120,10 @@ const Signup = ({navigation}) => {
             <TextInput
               style={styles.textInput}
               placeholder="••••••••••••••••"
+              placeholderTextColor="#909090"
               secureTextEntry={true}
+              value={password}
+              onChangeText={setPassword}
             />
           </View>
 
@@ -74,19 +131,23 @@ const Signup = ({navigation}) => {
             <Pressable
               style={({ pressed }) => [
                 styles.pressable,
-                { backgroundColor: pressed ? "#f68181" : "#f22a2a" },
+                { backgroundColor: pressed ? Colors.mainButtonColor : Colors.mainButtonColor },
               ]}
+              onPress={handleSignup}
+              disabled={loading}
             >
-              <Text style={styles.buttonText}>Signup</Text>
+              <Text style={styles.buttonText}>
+                {loading ? "Signing Up..." : "Signup"}
+              </Text>
             </Pressable>
 
             <Text
-              style={{ color: "#505050", fontWeight: "600", marginTop: 30 }}
+              style={{ color: Colors.font, fontWeight: "600", marginTop: 30 }}
             >
               Already have an account?{" "}
               <Pressable onPress={() => navigation.goBack()}>
                 <Text style={{ color: Colors.primary, fontWeight: "bold" }}>
-                  Signup
+                  Login
                 </Text>
               </Pressable>
             </Text>
@@ -129,6 +190,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 14,
     marginBottom: 10,
+    color: Colors.font
   },
   textInput: {
     width: "100%",
@@ -137,10 +199,10 @@ const styles = StyleSheet.create({
     height: 50,
     padding: 15,
     borderColor: Colors.borderStroke,
+    color: Colors.font
   },
   pressable: {
     alignItems: "center",
-    backgroundColor: "green",
     padding: 20,
     width: "100%",
     borderRadius: 10,
